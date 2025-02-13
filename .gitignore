@@ -37,4 +37,7 @@ temp/
 *.tsbuildinfo
 
 # Data files
-data/ 
+data/
+
+# Config files
+src/config/config.ts 

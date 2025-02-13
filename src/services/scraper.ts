@@ -5,8 +5,8 @@ import puppeteer, {
     HTTPResponse
 } from 'puppeteer-core';
 import { getBrowserConfig } from '../config/browser';
-import { TopWalletsResponse, ScrapedElement, DOMElement } from '../types';
-import { SELECTORS, URLS } from '../constants';
+import { TopWalletsResponse } from '../types';
+import { URLS } from '../constants';
 import { logger } from '../utils/logger';
 import { saveToJson } from '../utils/file';
 
@@ -15,7 +15,6 @@ export class WebScraper {
     private readonly dataDir: string;
 
     private constructor() {
-        // 在项目根目录下创建 data 文件夹
         this.dataDir = path.join(process.cwd(), 'data', 'wallets');
     }
 
@@ -27,7 +26,6 @@ export class WebScraper {
     }
 
     public async scrape(): Promise<{
-        elements: ScrapedElement[],
         topWallets: TopWalletsResponse | null
     }> {
         try {
@@ -54,16 +52,12 @@ export class WebScraper {
                 timeout: 30000
             });
 
-            // 抓取页面元素
-            const elements = await this.scrapeElements(page);
-
             // 等待API数据
             await page.waitForTimeout(5000);
 
             await browser.close();
 
             return {
-                elements,
                 topWallets: topWalletsData
             };
 
@@ -116,26 +110,5 @@ export class WebScraper {
                 }
             }
         });
-    }
-
-    private async scrapeElements(page: Page): Promise<ScrapedElement[]> {
-        await page.waitForSelector(SELECTORS.TARGET_ELEMENT);
-
-        return page.evaluate((selector: string) => {
-            const container = document.querySelector(selector);
-            if (!container) return [];
-
-            const children = Array.from(container.children) as DOMElement[];
-            const result: ScrapedElement[] = [];
-
-            for (const child of children) {
-                result.push({
-                    text: child.textContent || '',
-                    html: child.innerHTML
-                });
-            }
-
-            return result;
-        }, SELECTORS.TARGET_ELEMENT);
     }
 } 

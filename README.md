@@ -13,7 +13,21 @@
 - 🔍 完整的错误处理
 - 📋 统一的日志管理
 
-## 快速开始
+## 安装步骤
+
+1. 克隆仓库
+2. 安装依赖
+3. 配置文件设置
+
+   ```bash
+   # 复制配置文件模板
+   cp src/config/config.template.ts src/config/config.ts
+
+   # 编辑配置文件，填入你的 RPC 节点
+   vim src/config/config.ts
+   ```
+
+## 使用方法
 
 1. 安装依赖
 

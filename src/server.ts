@@ -58,7 +58,7 @@ export class Server {
     // Mint 搜索接口
     this.app.post('/api/mint-search', async (req, res) => {
       try {
-        const { walletAddress, filterFailed = false, maxTxCount = 50 } = req.body;
+        const { walletAddress, filterFailed = false, maxTxCount = 100 } = req.body;
         logger.info('Mint搜索请求参数:', { walletAddress, filterFailed, maxTxCount });
 
         if (!walletAddress) {
@@ -118,7 +118,7 @@ export class Server {
               const result = await this.mintSearchService.getRecentMintTransactions(
                 walletId,
                 false,
-                500
+                50
               );
               // 从返回的数据结构中正确提取 mintAddress
               return result.data.map(item => item.mintAddress);

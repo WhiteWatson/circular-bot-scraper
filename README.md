@@ -22,10 +22,9 @@
    ```bash
    # 复制配置文件模板
    cp src/config/config.template.ts src/config/config.ts
-
-   # 编辑配置文件，填入你的 RPC 节点
-   vim src/config/config.ts
    ```
+
+4. 编辑配置文件，填入你的 RPC 节点，可以用免费的，没有的话跑不起来
 
 ## 使用方法
 

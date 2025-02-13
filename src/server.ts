@@ -108,7 +108,7 @@ export class Server {
     this.app.get('/api/latest-mintslist', async (_, res) => {
       try {
         // 获取最新的钱包ID列表
-        const walletIds = await getLatestWalletIds(10);
+        const walletIds = await getLatestWalletIds(1);
         logger.info(`获取到 ${walletIds.length} 个唯一钱包地址`);
 
         // 并行执行所有钱包的 mint 搜索

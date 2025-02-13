@@ -25,7 +25,7 @@ export async function getBrowserConfig(): Promise<BrowserConfig> {
 
         default:
             return {
-                executablePath: await chromium.executablePath(),
+                executablePath: '/usr/bin/chromium-browser',
                 headless: 'new',
                 args: [
                     ...chromium.args,

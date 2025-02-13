@@ -58,7 +58,7 @@ export class Server {
     // Mint 搜索接口
     this.app.post('/api/mint-search', async (req, res) => {
       try {
-        const { walletAddress, filterFailed = false, maxTxCount = 500 } = req.body;
+        const { walletAddress, filterFailed = false, maxTxCount = 100 } = req.body;
         logger.info('Mint搜索请求参数:', { walletAddress, filterFailed, maxTxCount });
 
         if (!walletAddress) {

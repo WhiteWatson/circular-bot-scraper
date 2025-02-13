@@ -63,3 +63,15 @@ npm run dev
 ```bash
 pm2 start npm --name "circular-bot" -- run dev
 ```
+
+## 与套利系统联动，全自动获取mints
+推荐使用 https://github.com/SaoXuan/rust-mev-bot-shared 套利机器人，作者靠谱，社区活跃，对小白友好
+
+如何设置联动：
+**修改**Rust Solana mev套利机器人配置文件中的`load_mints_from_url`
+```
+load_mints_from_url: 'http://127.0.0.1:3000/api/latest-mintslist'
+```
+**删除**Rust Solana mev套利机器人配置文件中的`birdeye_api_key` ，或者把这行配置改成空 ""
+
+随后重新启动Rust Solana mev套利机器人

@@ -105,20 +105,23 @@ export class Server {
     });
 
     // 获取最新 Mints 列表接口
-    this.app.get('/api/latest-mintslist', async (_, res) => {
+    this.app.get('/api/latest-mintslist', async (req, res) => {
       try {
+        // 从查询参数中获取要处理的钱包数量，默认为 1
+        const walletCount = parseInt(req.query.walletCount as string) || 1;
+
         // 获取最新的钱包ID列表
         const walletIds = await getLatestWalletIds(1);
-        logger.info(`获取到 ${walletIds.length} 个唯一钱包地址`);
+        logger.info(`获取到 ${walletIds.length} 个唯一钱包地址，将处理前 ${walletCount} 个钱包`);
 
-        // 并行执行所有钱包的 mint 搜索
+        // 并行执行指定数量钱包的 mint 搜索
         const mintResults = await Promise.all(
-          walletIds.map(async walletId => {
+          walletIds.slice(0, walletCount).map(async walletId => {
             try {
               const result = await this.mintSearchService.getRecentMintTransactions(
                 walletId,
                 false,
-                50
+                100
               );
               // 从返回的数据结构中正确提取 mintAddress
               return result.data.map(item => item.mintAddress);

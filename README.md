@@ -55,13 +55,35 @@ npm install
 4. 运行脚本
 
 ```bash
-npm run dev
+npm run start
 ```
+
+如果看到日志有输出这句话，证明你的机器运行的没问题
+```
+[INFO] 服务器已启动，监听端口 3000
+```
+
+5. 测试一下
+
+开一个新的ssh链接，输入
+
+```bash
+curl -X GET http://127.0.0.1:3000/api/latest-mintslist?walletCount=1 \
+-H "Content-Type: application/x-www-form-urlencoded"
+```
+
+稍等一下（1分钟），如果看到输出了mints地址列表，证明测试成功
 
 ## 在后台运行脚本
 
+上面的流程是在前台运行，关闭了ssh链接脚本就停了，如果想让脚本持续运行，可以用pm2管理器管理脚本程序运行
+
 ```bash
-pm2 start npm --name "circular-bot" -- run dev
+npm i pm2 -g
+```
+
+```bash
+pm2 start npm --name "circular-bot" -- run start
 ```
 
 ## 与套利系统联动，全自动获取mints
@@ -72,7 +94,7 @@ pm2 start npm --name "circular-bot" -- run dev
 
 **修改**Rust Solana mev套利机器人配置文件中的`load_mints_from_url`
 ```
-load_mints_from_url: 'http://127.0.0.1:3000/api/latest-mintslist'
+load_mints_from_url: 'http://127.0.0.1:3000/api/latest-mintslist?walletCount=5'
 ```
 
 **删除**Rust Solana mev套利机器人配置文件中的`birdeye_api_key` ，或者把这行配置改成空 ""

@@ -4,12 +4,14 @@ import { MintSearchService } from './services/MintSearchService';
 import { logger } from './utils/logger';
 import { config } from './config/config';
 import { getLatestWalletIds } from './utils/dataProcessor';
+import { TransactionAnalysisService } from './services/TransactionAnalysisService';
 
 export class Server {
   private static instance: Server;
   private app: express.Application;
   private port: number;
   private mintSearchService: MintSearchService;
+  private transactionAnalysisService: TransactionAnalysisService;
 
   private constructor() {
     this.app = express();
@@ -17,6 +19,7 @@ export class Server {
 
     // 使用配置文件中的 RPC 端点
     this.mintSearchService = new MintSearchService(config.rpc.endpoint);
+    this.transactionAnalysisService = new TransactionAnalysisService(config.rpc.endpoint);
 
     // 添加中间件
     this.app.use(express.json());
@@ -147,6 +150,44 @@ export class Server {
         res.status(500).json({
           success: false,
           error: 'Failed to get latest mints list',
+          details: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
+    // 钱包交易分析接口
+    this.app.post('/api/analyze-transactions', async (req, res) => {
+      try {
+        const { walletAddress, timeframeHours } = req.body;
+
+        if (!walletAddress) {
+          return res.status(400).json({
+            success: false,
+            error: 'Wallet address is required'
+          });
+        }
+
+        if (!timeframeHours || timeframeHours <= 0) {
+          return res.status(400).json({
+            success: false,
+            error: 'Valid timeframe in hours is required'
+          });
+        }
+
+        const analysis = await this.transactionAnalysisService.analyzeWalletTransactions(
+          walletAddress,
+          timeframeHours
+        );
+
+        res.json({
+          success: true,
+          data: analysis
+        });
+      } catch (error) {
+        logger.error('交易分析失败：', error);
+        res.status(500).json({
+          success: false,
+          error: 'Transaction analysis failed',
           details: error instanceof Error ? error.message : 'Unknown error'
         });
       }

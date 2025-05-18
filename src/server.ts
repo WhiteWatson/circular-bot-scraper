@@ -94,6 +94,38 @@ export class Server {
       }
     });
 
+    // 跟单接口
+    this.app.get('/api/follow', async (req, res) => {
+      try {
+        const { walletAddress, filterFailed = false, maxTxCount = 100 } = req.query;
+        logger.info('Mint搜索请求参数:', { walletAddress, filterFailed, maxTxCount });
+
+        if (!walletAddress) {
+          return res.status(400).json({
+            success: false,
+            error: 'Wallet address is required'
+          });
+        }
+
+        const result = await this.mintSearchService.getRecentMintTransactions(
+          walletAddress as string,
+          filterFailed as boolean,
+          maxTxCount as number
+        );
+
+        const mintAddressesList = result?.data?.map(item => item.mintAddress);
+
+        res.json(mintAddressesList);
+      } catch (error) {
+        logger.error('Mint搜索失败：', error);
+        res.status(500).json({
+          success: false,
+          error: 'Mint search failed',
+          details: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    });
+
     // 获取最新数据接口
     this.app.get('/api/latest', (_, res) => {
       try {
